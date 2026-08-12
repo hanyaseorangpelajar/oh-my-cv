@@ -51,6 +51,6 @@ export const pwa: ModuleOptions = {
       }
     ]
   },
-  registerWebManifestInRouteRules: true,
+  registerWebManifestInRouteRules: false,
   writePlugin: true
 };

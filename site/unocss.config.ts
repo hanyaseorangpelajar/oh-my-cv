@@ -59,6 +59,7 @@ export default defineConfig({
       }
     }),
     presetWebFonts({
+      timeouts: 30000,
       fonts: {
         ui: "Lato:400,700"
       }
