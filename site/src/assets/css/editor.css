@@ -79,13 +79,20 @@
   text-align: left !important;
 }
 
-.resume-header-item::after {
+.resume-header-item:not(.no-separator)::after {
+  content: " • " !important;
+  display: inline-block !important;
+  margin: 0 0.35rem !important;
+  opacity: 0.7;
+}
+
+.resume-header-item.no-separator::after {
   content: "" !important;
   display: none !important;
 }
 
 .resume-header-item {
-  margin-right: 0.5rem;
+  margin-right: 0 !important;
 }
 
 .resume-header-with-avatar.pos-left {

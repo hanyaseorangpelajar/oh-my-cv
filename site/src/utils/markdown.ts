@@ -98,13 +98,7 @@ export class MarkdownService {
       ? `<a href="${item.link}" target="_blank" rel="noopener noreferrer">${item.text}</a>`
       : item.text;
 
-    element = `<span class="resume-header-item ${space ? "" : "no-separator"}">
-      ${element}
-    </span>`;
-
-    if (space) {
-      element += " ";
-    }
+    element = `<span class="resume-header-item ${space ? "" : "no-separator"}">${element}</span>`;
 
     return item.newLine ? `<br>\n${element}` : element;
   }
