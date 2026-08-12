@@ -62,5 +62,6 @@ export default defineNuxtConfig({
     url: "https://ohmycv.app"
   },
 
-  pwa
+  pwa,
+  compatibilityDate: "2026-08-12"
 });

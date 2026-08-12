@@ -68,6 +68,18 @@ toolbar:
     title: Margins
     vertical: Top & Bottom
     horizontal: Left & Right
+  avatar:
+    title: ID Photo / Avatar
+    upload: Upload Photo
+    remove: Remove Photo
+    shape: Photo Shape
+    shape_circle: Circle
+    shape_rounded: Rounded
+    shape_square: Square
+    position: Position
+    pos_left: Top-Left
+    pos_right: Top-Right
+    size: Photo Size
   paragraph_spacing: Paragraph Spacing
   line_height: Line Spacing
 

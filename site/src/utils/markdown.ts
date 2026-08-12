@@ -18,8 +18,12 @@ type ResumeHeaderItem = {
   readonly newLine?: boolean;
 };
 
-type ResumeFrontMatter = {
+export type ResumeFrontMatter = {
   readonly name?: string;
+  readonly avatar?: string;
+  readonly avatarShape?: "circle" | "rounded" | "square";
+  readonly avatarWidth?: string;
+  readonly avatarPosition?: "left" | "right";
   readonly header?: Array<ResumeHeaderItem>;
 };
 
@@ -88,29 +92,46 @@ export class MarkdownService {
     );
   }
 
-  private _renderHeaderItem(item: ResumeHeaderItem, hasSeparator: boolean) {
-    const content = item.link
+  private _renderHeaderItem(item: ResumeHeaderItem, space: boolean) {
+    let element = item.link
       ? `<a href="${item.link}" target="_blank" rel="noopener noreferrer">${item.text}</a>`
       : item.text;
 
-    const element = `<span class="resume-header-item ${hasSeparator ? "" : "no-separator"}">
-      ${content}
+    element = `<span class="resume-header-item ${space ? "" : "no-separator"}">
+      ${element}
     </span>`;
+
+    if (space) {
+      element += " &nbsp;|&nbsp; ";
+    }
 
     return item.newLine ? `<br>\n${element}` : element;
   }
 
   public renderHeader(frontMatter: ResumeFrontMatter) {
-    const content = [
-      frontMatter.name ? `<h1>${frontMatter.name}</h1>\n` : "",
-      (frontMatter.header ?? [])
-        .map((item, i, array) =>
-          this._renderHeaderItem(item, i !== array.length - 1 && !array[i + 1].newLine)
-        )
-        .join("\n")
-    ].join("");
+    const nameHtml = frontMatter.name ? `<h1>${frontMatter.name}</h1>\n` : "";
+    const headerItemsHtml = (frontMatter.header ?? [])
+      .map((item, i, array) =>
+        this._renderHeaderItem(item, i !== array.length - 1 && !array[i + 1].newLine)
+      )
+      .join("\n");
 
-    return `<div class="resume-header">${content}</div>`;
+    const textContent = `${nameHtml}${headerItemsHtml}`;
+
+    if (frontMatter.avatar) {
+      const shape = frontMatter.avatarShape || "circle";
+      const width = frontMatter.avatarWidth || "80px";
+      const position = frontMatter.avatarPosition || "left";
+      const avatarHtml = `<div class="resume-avatar-wrapper"><img src="${frontMatter.avatar}" class="resume-avatar shape-${shape}" style="width: ${width}; height: ${width}; object-fit: cover;" /></div>`;
+
+      if (position === "right") {
+        return `<div class="resume-header resume-header-with-avatar pos-right"><div>${textContent}</div>${avatarHtml}</div>`;
+      } else {
+        return `<div class="resume-header resume-header-with-avatar pos-left">${avatarHtml}<div>${textContent}</div></div>`;
+      }
+    }
+
+    return `<div class="resume-header">${textContent}</div>`;
   }
 
   public renderResume(md: string) {

@@ -39,6 +39,7 @@
 import {
   EditorToolbarFile,
   EditorToolbarPaper,
+  EditorToolbarAvatar,
   EditorToolbarThemeColor,
   EditorToolbarFontFamily,
   EditorToolbarFontSize,
@@ -58,6 +59,11 @@ const tools = [
     id: "paper_size",
     icon: "i-majesticons:paper-fold-line",
     component: EditorToolbarPaper
+  },
+  {
+    id: "avatar",
+    icon: "i-material-symbols:account-circle-outline",
+    component: EditorToolbarAvatar
   },
   {
     id: "theme_color",
@@ -113,7 +119,7 @@ const { t } = useI18n();
 
 const getTooltip = (id: string) => {
   const key = `toolbar.${id}`;
-  return ["file", "correct_case", "font_family", "margins"].includes(id)
+  return ["file", "correct_case", "font_family", "margins", "avatar"].includes(id)
     ? t(`${key}.title`)
     : t(key);
 };

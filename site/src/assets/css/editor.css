@@ -60,3 +60,43 @@
     height: 100vh !important;
   }
 }
+
+/* Avatar / ID Photo Header Layout */
+.resume-header-with-avatar {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.resume-header-with-avatar.pos-left {
+  flex-direction: row;
+}
+
+.resume-header-with-avatar.pos-right {
+  flex-direction: row-reverse;
+  justify-content: space-between;
+}
+
+.resume-avatar-wrapper {
+  flex-shrink: 0;
+}
+
+.resume-avatar {
+  display: block;
+  object-fit: cover;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.resume-avatar.shape-circle {
+  border-radius: 9999px;
+}
+
+.resume-avatar.shape-rounded {
+  border-radius: 12%;
+}
+
+.resume-avatar.shape-square {
+  border-radius: 0;
+}
+

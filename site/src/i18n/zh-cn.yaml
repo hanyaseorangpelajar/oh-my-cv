@@ -68,6 +68,18 @@ toolbar:
     title: 页边距
     vertical: 上下
     horizontal: 左右
+  avatar:
+    title: 证件照 / 头像
+    upload: 上传照片
+    remove: 移除照片
+    shape: 照片形状
+    shape_circle: 圆形
+    shape_rounded: 圆角
+    shape_square: 方形
+    position: 位置
+    pos_left: 左上方
+    pos_right: 右上方
+    size: 照片大小
   paragraph_spacing: 段间距
   line_height: 行间距
 

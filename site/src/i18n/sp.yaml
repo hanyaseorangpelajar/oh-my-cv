@@ -68,6 +68,18 @@ toolbar:
     title: Margenes
     vertical: Arriba & Abajo
     horizontal: Izquierdo & Derecho
+  avatar:
+    title: Foto de Perfil / Avatar
+    upload: Subir Foto
+    remove: Eliminar Foto
+    shape: Forma de la Foto
+    shape_circle: Círculo
+    shape_rounded: Redondeado
+    shape_square: Cuadrado
+    position: Posición
+    pos_left: Superior Izquierda
+    pos_right: Superior Derecha
+    size: Tamaño
   paragraph_spacing: Espaciado de párrafo
   line_height: Espaciado de línea
 
