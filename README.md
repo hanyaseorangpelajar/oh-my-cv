@@ -48,8 +48,11 @@ Contributions are welcome. Please read this [Contributing Guide](.github/CONTRIB
 
 &nbsp;
 
-## Credits
+## Credits & Fork Notice
 
+This repository is a personal fork of [oh-my-cv](https://github.com/renovamen/oh-my-cv) created by [Xiaohan Zou (@renovamen)](https://github.com/renovamen). All original work, design, and implementation credits belong to the original author.
+
+Original project references:
 - [billryan/resume](https://github.com/billryan/resume)
 
 
@@ -58,3 +61,4 @@ Contributions are welcome. Please read this [Contributing Guide](.github/CONTRIB
 ## License
 
 [GPL-3.0](LICENSE)
+
