@@ -107,32 +107,48 @@
     <UiDialog :open="isModalOpen" @update:open="isModalOpen = $event">
       <UiDialogContent class="sm:max-w-md">
         <UiDialogHeader>
-          <UiDialogTitle>Crop & Adjust ID Photo</UiDialogTitle>
+          <UiDialogTitle>Crop & Reposition Photo</UiDialogTitle>
           <UiDialogDescription>
-            Position and zoom your photo to fit standard CV dimensions (1:1).
+            Drag to move photo. Scroll or use slider to zoom.
           </UiDialogDescription>
         </UiDialogHeader>
 
         <div class="flex flex-col items-center gap-4 py-2">
-          <!-- Canvas Crop Area -->
-          <div class="relative w-64 h-64 border rounded-lg overflow-hidden bg-black/5 flex items-center justify-center shadow-inner">
-            <canvas ref="canvasRef" class="max-w-full max-h-full cursor-grab active:cursor-grabbing"></canvas>
+          <!-- Interactive Crop Container -->
+          <div
+            class="relative w-72 h-72 border rounded-xl overflow-hidden bg-neutral-900 flex items-center justify-center shadow-inner select-none touch-none"
+            @mousedown="onMouseDown"
+            @mousemove="onMouseMove"
+            @mouseup="onMouseUp"
+            @mouseleave="onMouseUp"
+            @touchstart="onTouchStart"
+            @touchmove="onTouchMove"
+            @touchend="onTouchEnd"
+            @wheel.prevent="onWheel"
+          >
+            <canvas ref="canvasRef" class="w-full h-full cursor-grab active:cursor-grabbing"></canvas>
 
-            <!-- Circular / Square Crop Guide Overlay -->
+            <!-- Dimmed Background Outside Crop Window -->
             <div
               :class="[
-                'absolute inset-0 border-2 border-primary/70 pointer-events-none transition-all',
-                modalShape === 'circle' ? 'rounded-full' : modalShape === 'rounded' ? 'rounded-xl' : 'rounded-none'
+                'absolute inset-0 border-2 border-primary/90 pointer-events-none transition-all shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]',
+                modalShape === 'circle' ? 'rounded-full' : modalShape === 'rounded' ? 'rounded-2xl' : 'rounded-none'
               ]"
             ></div>
+
+            <!-- Hint overlay -->
+            <div class="absolute bottom-2 left-2 bg-black/70 text-white text-[10px] px-2.5 py-1 rounded-full pointer-events-none backdrop-blur-sm flex items-center gap-1.5">
+              <span class="i-carbon:drag-horizontal size-3" />
+              <span>Drag to move • Scroll to zoom</span>
+            </div>
           </div>
 
-          <!-- Controls: Zoom -->
-          <div class="w-full flex items-center gap-3 px-2 text-xs">
+          <!-- Zoom Slider & Reset -->
+          <div class="w-full flex items-center gap-3 px-1 text-xs">
             <span class="i-carbon:zoom-out text-muted-foreground" />
             <input
               type="range"
-              min="0.5"
+              min="0.2"
               max="3"
               step="0.05"
               v-model.number="zoom"
@@ -140,10 +156,13 @@
               class="w-full accent-primary h-1.5 bg-accent rounded-lg cursor-pointer"
             />
             <span class="i-carbon:zoom-in text-muted-foreground" />
+            <UiButton size="xs" variant="ghost" @click="resetCrop" title="Reset Zoom & Position">
+              <span class="i-carbon:reset size-3.5" />
+            </UiButton>
           </div>
 
-          <!-- Controls: Shape inside Modal -->
-          <div class="w-full flex justify-between items-center text-xs">
+          <!-- Shape Selection inside Modal -->
+          <div class="w-full flex justify-between items-center text-xs pt-1">
             <span class="font-medium text-muted-foreground">Border Style:</span>
             <div class="flex gap-1.5">
               <UiButton
@@ -187,7 +206,13 @@ const canvasRef = ref<HTMLCanvasElement | null>(null);
 
 const isModalOpen = ref(false);
 const rawImage = ref<HTMLImageElement | null>(null);
+
+// Interactive Cropper State
 const zoom = ref(1);
+const offsetX = ref(0);
+const offsetY = ref(0);
+const isDragging = ref(false);
+const dragStart = ref({ x: 0, y: 0 });
 const modalShape = ref<"circle" | "rounded" | "square">("circle");
 
 const shapes = computed(() => [
@@ -232,7 +257,7 @@ const handleFileSelect = (event: Event) => {
     const img = new Image();
     img.onload = () => {
       rawImage.value = img;
-      zoom.value = 1;
+      resetCrop();
       modalShape.value = currentShape.value || "circle";
       isModalOpen.value = true;
       nextTick(() => drawCanvas());
@@ -241,6 +266,13 @@ const handleFileSelect = (event: Event) => {
   };
   reader.readAsDataURL(file);
   target.value = "";
+};
+
+const resetCrop = () => {
+  zoom.value = 1;
+  offsetX.value = 0;
+  offsetY.value = 0;
+  drawCanvas();
 };
 
 const drawCanvas = () => {
@@ -257,14 +289,72 @@ const drawCanvas = () => {
 
   ctx.clearRect(0, 0, size, size);
 
-  // Calculate scaled dimensions to cover 300x300
-  const scale = Math.max(size / img.width, size / img.height) * zoom.value;
+  // Canvas background
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, size, size);
+
+  // Calculate cover scale
+  const baseScale = Math.max(size / img.width, size / img.height);
+  const scale = baseScale * zoom.value;
+
   const w = img.width * scale;
   const h = img.height * scale;
-  const x = (size - w) / 2;
-  const y = (size - h) / 2;
+
+  // Center position + user drag offset
+  const x = (size - w) / 2 + offsetX.value;
+  const y = (size - h) / 2 + offsetY.value;
 
   ctx.drawImage(img, x, y, w, h);
+};
+
+// Drag Events (Mouse)
+const onMouseDown = (e: MouseEvent) => {
+  isDragging.value = true;
+  dragStart.value = {
+    x: e.clientX - offsetX.value,
+    y: e.clientY - offsetY.value
+  };
+};
+
+const onMouseMove = (e: MouseEvent) => {
+  if (!isDragging.value) return;
+  offsetX.value = e.clientX - dragStart.value.x;
+  offsetY.value = e.clientY - dragStart.value.y;
+  drawCanvas();
+};
+
+const onMouseUp = () => {
+  isDragging.value = false;
+};
+
+// Drag Events (Touch)
+const onTouchStart = (e: TouchEvent) => {
+  if (e.touches.length === 1) {
+    isDragging.value = true;
+    dragStart.value = {
+      x: e.touches[0].clientX - offsetX.value,
+      y: e.touches[0].clientY - offsetY.value
+    };
+  }
+};
+
+const onTouchMove = (e: TouchEvent) => {
+  if (!isDragging.value || e.touches.length !== 1) return;
+  offsetX.value = e.touches[0].clientX - dragStart.value.x;
+  offsetY.value = e.touches[0].clientY - dragStart.value.y;
+  drawCanvas();
+};
+
+const onTouchEnd = () => {
+  isDragging.value = false;
+};
+
+// Mouse Wheel Zooming
+const onWheel = (e: WheelEvent) => {
+  const delta = e.deltaY > 0 ? -0.05 : 0.05;
+  const newZoom = Math.min(Math.max(0.2, zoom.value + delta), 4);
+  zoom.value = Number(newZoom.toFixed(2));
+  drawCanvas();
 };
 
 const updateFrontMatter = (updatedFields: Partial<ResumeFrontMatter>) => {
@@ -292,7 +382,6 @@ const applyCrop = () => {
   const canvas = canvasRef.value;
   if (!canvas) return;
 
-  // Compress to base64 WebP / PNG data URL
   const dataUrl = canvas.toDataURL("image/webp", 0.9) || canvas.toDataURL("image/png");
 
   updateFrontMatter({
