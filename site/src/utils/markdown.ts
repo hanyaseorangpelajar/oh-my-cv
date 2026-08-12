@@ -127,9 +127,9 @@ export class MarkdownService {
       const avatarHtml = `<div class="resume-avatar-wrapper"><img src="${frontMatter.avatar}" class="resume-avatar shape-${shape}" style="width: ${width}; height: ${height}; object-fit: cover;" /></div>`;
 
       if (position === "right") {
-        return `<div class="resume-header resume-header-with-avatar pos-right"><div>${textContent}</div>${avatarHtml}</div>`;
+        return `<div class="resume-header resume-header-with-avatar pos-right"><div class="resume-header-content">${textContent}</div>${avatarHtml}</div>`;
       } else {
-        return `<div class="resume-header resume-header-with-avatar pos-left">${avatarHtml}<div>${textContent}</div></div>`;
+        return `<div class="resume-header resume-header-with-avatar pos-left">${avatarHtml}<div class="resume-header-content">${textContent}</div></div>`;
       }
     }
 
