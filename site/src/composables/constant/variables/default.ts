@@ -239,6 +239,7 @@ ${PREVIEW_SELECTOR} .resume-header-summary {
   font-size: 0.9em;
   line-height: 1.4;
   opacity: 0.85;
+  text-align: justify;
 }
 
 /* Citations */

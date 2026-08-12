@@ -101,6 +101,7 @@
   line-height: 1.4;
   opacity: 0.85;
   color: currentColor;
+  text-align: justify !important;
 }
 
 .resume-header-with-avatar.pos-left {
