@@ -19,6 +19,9 @@ export const LOCAL_EN_FONTS: Font[] = [
     name: "Arial Narrow"
   },
   {
+    name: "Calibri"
+  },
+  {
     name: "CMU Sans Serif"
   },
   {
