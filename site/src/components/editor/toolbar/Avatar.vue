@@ -148,7 +148,7 @@
             <span class="i-carbon:zoom-out text-muted-foreground" />
             <input
               type="range"
-              min="0.2"
+              min="1"
               max="3"
               step="0.05"
               v-model.number="zoom"
@@ -275,10 +275,32 @@ const resetCrop = () => {
   drawCanvas();
 };
 
+const clampOffsets = () => {
+  const canvas = canvasRef.value;
+  const img = rawImage.value;
+  if (!canvas || !img) return;
+
+  const size = 300;
+  const baseScale = Math.max(size / img.width, size / img.height);
+  const scale = baseScale * zoom.value;
+
+  const w = img.width * scale;
+  const h = img.height * scale;
+
+  // Bound maximum pan offset to prevent empty gaps
+  const maxOffsetX = Math.max(0, (w - size) / 2);
+  const maxOffsetY = Math.max(0, (h - size) / 2);
+
+  offsetX.value = Math.max(-maxOffsetX, Math.min(maxOffsetX, offsetX.value));
+  offsetY.value = Math.max(-maxOffsetY, Math.min(maxOffsetY, offsetY.value));
+};
+
 const drawCanvas = () => {
   const canvas = canvasRef.value;
   const img = rawImage.value;
   if (!canvas || !img) return;
+
+  clampOffsets();
 
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
@@ -352,7 +374,7 @@ const onTouchEnd = () => {
 // Mouse Wheel Zooming
 const onWheel = (e: WheelEvent) => {
   const delta = e.deltaY > 0 ? -0.05 : 0.05;
-  const newZoom = Math.min(Math.max(0.2, zoom.value + delta), 4);
+  const newZoom = Math.min(Math.max(1, zoom.value + delta), 3);
   zoom.value = Number(newZoom.toFixed(2));
   drawCanvas();
 };
