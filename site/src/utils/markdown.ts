@@ -103,7 +103,7 @@ export class MarkdownService {
     </span>`;
 
     if (space) {
-      element += " &nbsp; ";
+      element += " ";
     }
 
     return item.newLine ? `<br>\n${element}` : element;

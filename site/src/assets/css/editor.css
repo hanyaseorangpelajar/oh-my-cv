@@ -79,6 +79,15 @@
   text-align: left !important;
 }
 
+.resume-header-item::after {
+  content: "" !important;
+  display: none !important;
+}
+
+.resume-header-item {
+  margin-right: 0.5rem;
+}
+
 .resume-header-with-avatar.pos-left {
   flex-direction: row;
 }
