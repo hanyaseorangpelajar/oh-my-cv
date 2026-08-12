@@ -223,8 +223,8 @@ ${PREVIEW_SELECTOR} .resume-header h1 {
   margin-bottom: 8px;
 }
 
-${PREVIEW_SELECTOR} .resume-header-item:not(.no-separator)::after {
-  content: " | ";
+${PREVIEW_SELECTOR} .resume-header-item {
+  margin-right: 0.5rem;
 }
 
 /* Citations */
