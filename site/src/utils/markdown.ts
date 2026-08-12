@@ -20,6 +20,7 @@ type ResumeHeaderItem = {
 
 export type ResumeFrontMatter = {
   readonly name?: string;
+  readonly summary?: string;
   readonly avatar?: string;
   readonly avatarShape?: "circle" | "rounded" | "square";
   readonly avatarWidth?: string;
@@ -111,7 +112,11 @@ export class MarkdownService {
       )
       .join("\n");
 
-    const textContent = `${nameHtml}${headerItemsHtml}`;
+    const summaryHtml = frontMatter.summary
+      ? `<div class="resume-header-summary">${frontMatter.summary}</div>\n`
+      : "";
+
+    const textContent = `${nameHtml}${headerItemsHtml}${summaryHtml}`;
 
     if (frontMatter.avatar) {
       const shape = frontMatter.avatarShape || "square";

@@ -95,6 +95,14 @@
   margin-right: 0 !important;
 }
 
+.resume-header-summary {
+  margin-top: 0.5rem;
+  font-size: 0.9em;
+  line-height: 1.4;
+  opacity: 0.85;
+  color: currentColor;
+}
+
 .resume-header-with-avatar.pos-left {
   flex-direction: row;
 }

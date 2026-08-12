@@ -20,6 +20,7 @@ export const DEFAULT_STYLES = {
 
 export const DEFAULT_MD_CONTENT = `---
 name: Haha Ha
+summary: Passionate Software Engineer specializing in full-stack web applications and UI design.
 header:
   - text: |
       <span style="font-size: 1.2em; font-weight: bold;">Applying for: Cooking Engineer</span>
@@ -231,6 +232,13 @@ ${PREVIEW_SELECTOR} .resume-header-item:not(.no-separator)::after {
 
 ${PREVIEW_SELECTOR} .resume-header-item {
   margin-right: 0;
+}
+
+${PREVIEW_SELECTOR} .resume-header-summary {
+  margin-top: 6px;
+  font-size: 0.9em;
+  line-height: 1.4;
+  opacity: 0.85;
 }
 
 /* Citations */
