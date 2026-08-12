@@ -9,13 +9,13 @@
         <img
           :src="currentAvatar"
           :class="[
-            'w-14 h-14 object-cover border shadow-sm',
+            'w-12 h-16 object-cover border shadow-sm',
             currentShape === 'circle' ? 'rounded-full' : currentShape === 'rounded' ? 'rounded-md' : 'rounded-none'
           ]"
           alt="Avatar Preview"
         />
         <div class="flex flex-col gap-1 text-xs">
-          <span class="font-medium text-foreground">Current Photo</span>
+          <span class="font-medium text-foreground">Current Photo (3×4 cm)</span>
           <span class="text-muted-foreground capitalize">{{ currentShape }} • {{ currentPos }}</span>
         </div>
       </div>
@@ -52,18 +52,18 @@
         </div>
       </div>
 
-      <!-- Controls: Size -->
+      <!-- Controls: Size Presets (3:4 ratio) -->
       <div class="flex flex-col gap-1.5 mt-1">
         <label class="text-xs font-medium text-muted-foreground">{{ $t("toolbar.avatar.size") }}</label>
-        <div class="grid grid-cols-4 gap-1">
+        <div class="grid grid-cols-3 gap-1">
           <UiButton
-            v-for="sz in sizes"
-            :key="sz"
+            v-for="sz in sizePresets"
+            :key="sz.label"
             size="xs"
-            :variant="currentSize === sz ? 'default' : 'outline'"
-            @click="updateAvatarSetting('avatarWidth', sz)"
+            :variant="currentSize === sz.w ? 'default' : 'outline'"
+            @click="applySizePreset(sz)"
           >
-            {{ sz }}
+            {{ sz.label }}
           </UiButton>
         </div>
       </div>
@@ -82,11 +82,11 @@
 
     <!-- Empty Upload Placeholder -->
     <div v-else class="flex flex-col items-center justify-center p-4 border border-dashed rounded-lg bg-accent/20 text-center gap-2">
-      <div class="w-12 h-12 rounded-full bg-accent flex items-center justify-center text-muted-foreground">
+      <div class="w-12 h-16 rounded-md border border-dashed bg-accent flex items-center justify-center text-muted-foreground">
         <span class="i-material-symbols:add-a-photo-outline size-6" />
       </div>
       <p class="text-xs text-muted-foreground">
-        Add an ID photo to your resume header
+        Add 3 × 4 cm ID photo to your resume header
       </p>
       <UiButton size="sm" class="mt-1" @click="openFileInput">
         <span class="i-carbon:upload mr-1.5 size-4" />
@@ -103,20 +103,20 @@
       @change="handleFileSelect"
     />
 
-    <!-- Crop & Adjust Modal Dialog -->
+    <!-- Crop & Adjust Modal Dialog (3:4 Ratio) -->
     <UiDialog :open="isModalOpen" @update:open="isModalOpen = $event">
       <UiDialogContent class="sm:max-w-md">
         <UiDialogHeader>
-          <UiDialogTitle>Crop & Reposition Photo</UiDialogTitle>
+          <UiDialogTitle>Crop 3 × 4 ID Photo</UiDialogTitle>
           <UiDialogDescription>
-            Drag to move photo. Scroll or use slider to zoom.
+            Drag to position your face inside the 3:4 passport frame. Scroll or use slider to zoom.
           </UiDialogDescription>
         </UiDialogHeader>
 
         <div class="flex flex-col items-center gap-4 py-2">
-          <!-- Interactive Crop Container -->
+          <!-- Interactive Crop Container (3:4 Aspect Ratio) -->
           <div
-            class="relative w-72 h-72 border rounded-xl overflow-hidden bg-neutral-900 flex items-center justify-center shadow-inner select-none touch-none"
+            class="relative w-60 h-80 border rounded-xl overflow-hidden bg-neutral-900 flex items-center justify-center shadow-inner select-none touch-none"
             @mousedown="onMouseDown"
             @mousemove="onMouseMove"
             @mouseup="onMouseUp"
@@ -128,7 +128,7 @@
           >
             <canvas ref="canvasRef" class="w-full h-full cursor-grab active:cursor-grabbing"></canvas>
 
-            <!-- Dimmed Background Outside Crop Window -->
+            <!-- Dimmed Background Outside 3:4 Crop Window -->
             <div
               :class="[
                 'absolute inset-0 border-2 border-primary/90 pointer-events-none transition-all shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]',
@@ -139,7 +139,7 @@
             <!-- Hint overlay -->
             <div class="absolute bottom-2 left-2 bg-black/70 text-white text-[10px] px-2.5 py-1 rounded-full pointer-events-none backdrop-blur-sm flex items-center gap-1.5">
               <span class="i-carbon:drag-horizontal size-3" />
-              <span>Drag to move • Scroll to zoom</span>
+              <span>3×4 Ratio • Drag & Scroll</span>
             </div>
           </div>
 
@@ -185,7 +185,7 @@
 
           <UiButton size="sm" @click="applyCrop">
             <span class="i-carbon:checkmark mr-1 size-4" />
-            Apply Photo
+            Apply 3×4 Photo
           </UiButton>
         </UiDialogFooter>
       </UiDialogContent>
@@ -213,12 +213,16 @@ const offsetX = ref(0);
 const offsetY = ref(0);
 const isDragging = ref(false);
 const dragStart = ref({ x: 0, y: 0 });
-const modalShape = ref<"circle" | "rounded" | "square">("circle");
+const modalShape = ref<"circle" | "rounded" | "square">("square");
+
+// 3:4 Aspect Ratio Canvas Dimensions (300 x 400)
+const CROP_W = 300;
+const CROP_H = 400;
 
 const shapes = computed(() => [
-  { value: "circle" as const, label: t("toolbar.avatar.shape_circle") },
+  { value: "square" as const, label: t("toolbar.avatar.shape_square") },
   { value: "rounded" as const, label: t("toolbar.avatar.shape_rounded") },
-  { value: "square" as const, label: t("toolbar.avatar.shape_square") }
+  { value: "circle" as const, label: t("toolbar.avatar.shape_circle") }
 ]);
 
 const positions = computed(() => [
@@ -226,7 +230,11 @@ const positions = computed(() => [
   { value: "right" as const, label: t("toolbar.avatar.pos_right") }
 ]);
 
-const sizes = ["70px", "80px", "90px", "100px"];
+const sizePresets = [
+  { label: "3×4 cm", w: "3cm", h: "4cm" },
+  { label: "2.25×3 cm", w: "2.25cm", h: "3cm" },
+  { label: "3.75×5 cm", w: "3.75cm", h: "5cm" }
+];
 
 const frontMatterParser = new FrontMatterParser<ResumeFrontMatter>({
   errorBehavior: "last"
@@ -239,9 +247,9 @@ const parsedFM = computed(() => {
 });
 
 const currentAvatar = computed(() => parsedFM.value.frontMatter.avatar || "");
-const currentShape = computed(() => parsedFM.value.frontMatter.avatarShape || "circle");
+const currentShape = computed(() => parsedFM.value.frontMatter.avatarShape || "square");
 const currentPos = computed(() => parsedFM.value.frontMatter.avatarPosition || "left");
-const currentSize = computed(() => parsedFM.value.frontMatter.avatarWidth || "80px");
+const currentSize = computed(() => parsedFM.value.frontMatter.avatarWidth || "3cm");
 
 const openFileInput = () => {
   fileInputRef.value?.click();
@@ -258,7 +266,7 @@ const handleFileSelect = (event: Event) => {
     img.onload = () => {
       rawImage.value = img;
       resetCrop();
-      modalShape.value = currentShape.value || "circle";
+      modalShape.value = currentShape.value || "square";
       isModalOpen.value = true;
       nextTick(() => drawCanvas());
     };
@@ -280,16 +288,15 @@ const clampOffsets = () => {
   const img = rawImage.value;
   if (!canvas || !img) return;
 
-  const size = 300;
-  const baseScale = Math.max(size / img.width, size / img.height);
+  const baseScale = Math.max(CROP_W / img.width, CROP_H / img.height);
   const scale = baseScale * zoom.value;
 
   const w = img.width * scale;
   const h = img.height * scale;
 
-  // Bound maximum pan offset to prevent empty gaps
-  const maxOffsetX = Math.max(0, (w - size) / 2);
-  const maxOffsetY = Math.max(0, (h - size) / 2);
+  // Bound maximum pan offset to prevent empty gaps in 300x400 box
+  const maxOffsetX = Math.max(0, (w - CROP_W) / 2);
+  const maxOffsetY = Math.max(0, (h - CROP_H) / 2);
 
   offsetX.value = Math.max(-maxOffsetX, Math.min(maxOffsetX, offsetX.value));
   offsetY.value = Math.max(-maxOffsetY, Math.min(maxOffsetY, offsetY.value));
@@ -305,26 +312,25 @@ const drawCanvas = () => {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
-  const size = 300;
-  canvas.width = size;
-  canvas.height = size;
+  canvas.width = CROP_W;
+  canvas.height = CROP_H;
 
-  ctx.clearRect(0, 0, size, size);
+  ctx.clearRect(0, 0, CROP_W, CROP_H);
 
   // Canvas background
   ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, size, size);
+  ctx.fillRect(0, 0, CROP_W, CROP_H);
 
-  // Calculate cover scale
-  const baseScale = Math.max(size / img.width, size / img.height);
+  // Calculate cover scale for 300x400
+  const baseScale = Math.max(CROP_W / img.width, CROP_H / img.height);
   const scale = baseScale * zoom.value;
 
   const w = img.width * scale;
   const h = img.height * scale;
 
   // Center position + user drag offset
-  const x = (size - w) / 2 + offsetX.value;
-  const y = (size - h) / 2 + offsetY.value;
+  const x = (CROP_W - w) / 2 + offsetX.value;
+  const y = (CROP_H - h) / 2 + offsetY.value;
 
   ctx.drawImage(img, x, y, w, h);
 };
@@ -410,10 +416,18 @@ const applyCrop = () => {
     avatar: dataUrl,
     avatarShape: modalShape.value,
     avatarPosition: currentPos.value || "left",
-    avatarWidth: currentSize.value || "80px"
+    avatarWidth: currentSize.value || "3cm",
+    avatarHeight: "4cm"
   });
 
   isModalOpen.value = false;
+};
+
+const applySizePreset = (preset: { w: string; h: string }) => {
+  updateFrontMatter({
+    avatarWidth: preset.w,
+    avatarHeight: preset.h
+  });
 };
 
 const updateAvatarSetting = (key: keyof ResumeFrontMatter, val: any) => {
@@ -425,7 +439,8 @@ const removeAvatar = () => {
     avatar: undefined,
     avatarShape: undefined,
     avatarPosition: undefined,
-    avatarWidth: undefined
+    avatarWidth: undefined,
+    avatarHeight: undefined
   });
 };
 </script>

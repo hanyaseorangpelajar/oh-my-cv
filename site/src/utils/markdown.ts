@@ -23,6 +23,7 @@ export type ResumeFrontMatter = {
   readonly avatar?: string;
   readonly avatarShape?: "circle" | "rounded" | "square";
   readonly avatarWidth?: string;
+  readonly avatarHeight?: string;
   readonly avatarPosition?: "left" | "right";
   readonly header?: Array<ResumeHeaderItem>;
 };
@@ -119,10 +120,11 @@ export class MarkdownService {
     const textContent = `${nameHtml}${headerItemsHtml}`;
 
     if (frontMatter.avatar) {
-      const shape = frontMatter.avatarShape || "circle";
-      const width = frontMatter.avatarWidth || "80px";
+      const shape = frontMatter.avatarShape || "square";
+      const width = frontMatter.avatarWidth || "3cm";
+      const height = frontMatter.avatarHeight || "4cm";
       const position = frontMatter.avatarPosition || "left";
-      const avatarHtml = `<div class="resume-avatar-wrapper"><img src="${frontMatter.avatar}" class="resume-avatar shape-${shape}" style="width: ${width}; height: ${width}; object-fit: cover;" /></div>`;
+      const avatarHtml = `<div class="resume-avatar-wrapper"><img src="${frontMatter.avatar}" class="resume-avatar shape-${shape}" style="width: ${width}; height: ${height}; object-fit: cover;" /></div>`;
 
       if (position === "right") {
         return `<div class="resume-header resume-header-with-avatar pos-right"><div>${textContent}</div>${avatarHtml}</div>`;
