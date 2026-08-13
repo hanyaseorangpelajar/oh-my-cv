@@ -72,7 +72,14 @@
 
 .resume-header-with-avatar h1 {
   text-align: left !important;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
+}
+
+.resume-header-date {
+  font-size: 0.88em;
+  color: currentColor;
+  opacity: 0.8;
+  margin-bottom: 6px;
 }
 
 .resume-header-with-avatar .resume-header-content {

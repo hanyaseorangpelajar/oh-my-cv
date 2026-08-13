@@ -20,6 +20,7 @@ export const DEFAULT_STYLES = {
 
 export const DEFAULT_MD_CONTENT = `---
 name: Haha Ha
+date: August 13, 2026
 summary: Passionate Software Engineer specializing in full-stack web applications and UI design.
 header:
   - text: |
@@ -221,7 +222,13 @@ ${PREVIEW_SELECTOR} .resume-header {
 ${PREVIEW_SELECTOR} .resume-header h1 {
   text-align: center;
   line-height: 1;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
+}
+
+${PREVIEW_SELECTOR} .resume-header-date {
+  font-size: 0.88em;
+  opacity: 0.8;
+  margin-bottom: 6px;
 }
 
 ${PREVIEW_SELECTOR} .resume-header-item:not(.no-separator)::after {

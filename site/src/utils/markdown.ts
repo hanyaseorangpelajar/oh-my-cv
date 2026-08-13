@@ -20,6 +20,7 @@ type ResumeHeaderItem = {
 
 export type ResumeFrontMatter = {
   readonly name?: string;
+  readonly date?: string;
   readonly summary?: string;
   readonly avatar?: string;
   readonly avatarShape?: "circle" | "rounded" | "square";
@@ -106,6 +107,7 @@ export class MarkdownService {
 
   public renderHeader(frontMatter: ResumeFrontMatter) {
     const nameHtml = frontMatter.name ? `<h1>${frontMatter.name}</h1>\n` : "";
+    const dateHtml = frontMatter.date ? `<div class="resume-header-date">${frontMatter.date}</div>\n` : "";
     const headerItemsHtml = (frontMatter.header ?? [])
       .map((item, i, array) =>
         this._renderHeaderItem(item, i !== array.length - 1 && !array[i + 1].newLine)
@@ -116,7 +118,7 @@ export class MarkdownService {
       ? `<div class="resume-header-summary">${frontMatter.summary}</div>\n`
       : "";
 
-    const textContent = `${nameHtml}${headerItemsHtml}${summaryHtml}`;
+    const textContent = `${nameHtml}${dateHtml}${headerItemsHtml}${summaryHtml}`;
 
     if (frontMatter.avatar) {
       const shape = frontMatter.avatarShape || "square";
